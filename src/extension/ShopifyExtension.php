@@ -175,7 +175,7 @@ class ShopifyExtension extends Extension
      *
      * @param Client $client
      *
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
     public function importCollections(Client $client, $type, $updatedatmin = false)
     {
@@ -277,7 +277,7 @@ class ShopifyExtension extends Extension
      *
      * @param Client $client
      *
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
     public function importCollects(Client $client, $product_id)
     {

@@ -271,7 +271,7 @@ class Product extends DataObject
      *
      * @param  $shopifyProduct
      * @return Product
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
     public static function findOrMakeFromShopifyData($shopifyProduct)
     {

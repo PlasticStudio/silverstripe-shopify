@@ -46,7 +46,7 @@ class ProductTag extends DataObject
      *
      * @param $shopifyVariant
      * @return ProductVariant
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
 
     public static function findOrMakeFromShopifyData($shopifyTag)

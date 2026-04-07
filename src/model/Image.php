@@ -67,7 +67,7 @@ class ShopifyImage extends DataObject
      *
      * @param $shopifyImage
      * @return Image
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function findOrMakeFromShopifyData($shopifyImage)

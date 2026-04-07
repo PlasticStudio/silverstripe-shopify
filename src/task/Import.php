@@ -5,9 +5,9 @@ namespace Swordfox\Shopify\Task;
 ini_set('max_execution_time', '300');
 
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
 use SilverStripe\Dev\BuildTask;
-
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\InputInterface;
 use Swordfox\Shopify\Client;
 
 /**
@@ -17,23 +17,25 @@ use Swordfox\Shopify\Client;
  */
 class Import extends BuildTask
 {
-    protected $title = 'Import shopify products';
+    protected string $title = 'Import shopify products';
 
-    protected $description = 'Import shopify products from the configured store';
+    protected static string $description = 'Import shopify products from the configured store';
 
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     public $api_limit;
     public $cron_interval;
 
-    public function run($request)
+    public function execute(InputInterface $input, PolyOutput $output): int
     {
         try {
             $client = new Client();
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         } catch (\Exception $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         }
 
         $productsonly = false;
@@ -57,7 +59,7 @@ class Import extends BuildTask
         }
 
         if (!Director::is_cli()) {
-            echo "<pre>";
+            $output->writeln('<pre>');;
         }
 
         if ($productsonly) {
@@ -76,9 +78,11 @@ class Import extends BuildTask
         }
 
         if (!Director::is_cli()) {
-            echo "</pre>";
+            $output->writeln('</pre>');;
         }
-        exit('Done');
+        
+        $output->writeln('Done');
+        return 0;
     }
 
     /**

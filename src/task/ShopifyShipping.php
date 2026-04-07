@@ -5,13 +5,10 @@ namespace Swordfox\Shopify\Task;
 ini_set('max_execution_time', 300);
 
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
 use SilverStripe\Dev\BuildTask;
-
+use SilverStripe\PolyExecution\PolyOutput;
 use Swordfox\Shopify\Client;
-
-use SilverStripe\Dev\Debug;
-use SilverStripe\Dev\Backtrace;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class Import
@@ -20,31 +17,35 @@ use SilverStripe\Dev\Backtrace;
  */
 class ShopifyShipping extends BuildTask
 {
-    protected $title = 'Shopify shipping zones/rates/countries';
+    protected string $title = 'Shopify shipping zones/rates/countries';
 
-    protected $description = 'Shopify shipping zones/rates/countries';
+    protected static string $description = 'Shopify shipping zones/rates/countries';
 
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    public function run($request)
+    public function execute(InputInterface $input, PolyOutput $output): int
     {
         if (!Director::is_cli()) {
-            echo "<pre>";
+            $output->writeln('<pre>');;
         }
 
         try {
             $client = new Client();
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         } catch (\Exception $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         }
 
         $this->updateShipping($client);
 
         if (!Director::is_cli()) {
-            echo "</pre>";
+            $output->writeln('</pre>');;
         }
-        exit('Done');
+        
+        $output->writeln('Done');
+        return 0;
     }
 }

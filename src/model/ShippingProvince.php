@@ -105,7 +105,7 @@ class ShippingProvince extends DataObject
      *
      * @param  $data
      * @return ShippingProvince
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
     public static function findOrMakeFromShopifyData($data)
     {

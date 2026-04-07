@@ -2,7 +2,7 @@
 
 namespace Swordfox\Shopify\Model;
 
-use SilverStripe\ORM\ArrayList;
+SilverStripe\Model\List\ArrayList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataObject;
 use Psr\SimpleCache\CacheInterface;
@@ -122,7 +122,7 @@ class ProductVariant extends DataObject
      *
      * @param  $shopifyVariant
      * @return ProductVariant
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws \SilverStripe\Core\Validation\ValidationException
      */
     public static function findOrMakeFromShopifyData($shopifyVariant)
     {

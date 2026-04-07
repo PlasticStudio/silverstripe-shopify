@@ -5,13 +5,10 @@ namespace Swordfox\Shopify\Task;
 ini_set('max_execution_time', '300');
 
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
 use SilverStripe\Dev\BuildTask;
-
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\InputInterface;
 use Swordfox\Shopify\Client;
-
-use SilverStripe\Dev\Debug;
-use SilverStripe\Dev\Backtrace;
 
 /**
  * Class Import
@@ -20,31 +17,35 @@ use SilverStripe\Dev\Backtrace;
  */
 class DeleteOnShopify extends BuildTask
 {
-    protected $title = 'Delete shopify products';
+    protected string $title = 'Delete shopify products';
 
-    protected $description = 'Delete shopify products with DeleteOnShopify = 1';
+    protected static string $description = 'Delete shopify products with DeleteOnShopify = 1';
 
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    public function run($request)
+    public function execute(InputInterface $input, PolyOutput $output): int
     {
         if (!Director::is_cli()) {
-            echo "<pre>";
+            $output->writeln('<pre>');;
         }
 
         try {
             $client = new Client();
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         } catch (\Exception $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         }
 
         $this->deleteProducts($client);
 
         if (!Director::is_cli()) {
-            echo "</pre>";
+            $output->writeln('</pre>');;
         }
-        exit('Done');
+
+        $output->writeln('Done');
+        return 0;
     }
 }

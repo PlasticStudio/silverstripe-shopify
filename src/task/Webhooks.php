@@ -4,11 +4,13 @@ namespace Swordfox\Shopify\Task;
 
 ini_set('max_execution_time', '300');
 
-use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
-use SilverStripe\Dev\BuildTask;
 use Exception;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\PolyExecution\PolyOutput;
 use Swordfox\Shopify\Client;
+use Symfony\Component\Console\Input\InputInterface;
+
 
 /**
  * Class Import
@@ -17,15 +19,15 @@ use Swordfox\Shopify\Client;
  */
 class Webhooks extends BuildTask
 {
-    protected $title = 'View / Create shopify webhooks';
+    protected string $title = 'View / Create shopify webhooks';
 
-    protected $description = 'View / Create shopify webhooks';
+    protected static string $description = 'View / Create shopify webhooks';
 
     protected $enabled = true;
 
     public $api_limit;
 
-    public function run($request)
+    public function execute(InputInterface $input, PolyOutput $output): int
     {
         $baseurl = Director::AbsoluteBaseURL();
 
@@ -36,9 +38,11 @@ class Webhooks extends BuildTask
         try {
             $client = new Client();
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         } catch (\Exception $e) {
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         }
 
         $urlParts = explode('/', $_SERVER['REQUEST_URI']);
@@ -60,7 +64,7 @@ class Webhooks extends BuildTask
         }
 
         if (!Director::is_cli()) {
-            echo "<pre>";
+            $output->writeln('<pre>');;
         }
 
         if ($create) {
@@ -100,7 +104,8 @@ class Webhooks extends BuildTask
             $response = $client->getWebhooks();
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             //print_r($e);
-            exit($e->getMessage());
+            $output->writeln($e->getMessage());
+            return 1;
         }
 
         $webhooksBody = $response->getBody()->getContents();
@@ -120,9 +125,10 @@ class Webhooks extends BuildTask
         }
 
         if (!Director::is_cli()) {
-            echo "</pre>";
+            $output->writeln('</pre>');
         }
 
-        exit('Done');
+        $output->writeln('Done');
+        return 0;
     }
 }

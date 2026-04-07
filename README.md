@@ -15,7 +15,7 @@ It makes use of the [Shopify Buy Button](https://www.shopify.com/buy-button) to 
 You'll end up with a import job that fetches all the products and variants and stores them as Product DataObject in your site.
 
 ## Requirements
-* SilverStripe 4.x
+* SilverStripe 6
 
 ## Installation
 Install the module trough composer and configure the api keys.  
