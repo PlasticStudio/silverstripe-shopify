@@ -5,7 +5,7 @@ namespace Swordfox\Shopify\SiteConfig;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 use Swordfox\Shopify\Model\ShippingCountry;
 
@@ -16,7 +16,7 @@ use Swordfox\Shopify\Model\ShippingCountry;
  * @package Swordfox\Shopify\SiteConfig
  */
 
-class ShopifySiteConfig extends DataExtension
+class ShopifySiteConfig extends Extension
 {
     private static $db = [
         'ShopifyCurrency' => 'Varchar(20)'

@@ -4,12 +4,8 @@ namespace Swordfox\Shopify\Model;
 
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\DataObject;
-SilverStripe\Model\List\PaginatedList;
-use SilverStripe\View\Requirements;
+use SilverStripe\Model\List\PaginatedList;
 use SilverStripe\Control\Director;
-SilverStripe\Model\ArrayData;
-SilverStripe\Model\List\ArrayList;
-use SilverStripe\Core\Convert;
 use SilverStripe\SiteConfig\SiteConfig;
 
 use Swordfox\Shopify\Client;
