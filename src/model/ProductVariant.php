@@ -2,7 +2,7 @@
 
 namespace Swordfox\Shopify\Model;
 
-SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataObject;
 use Psr\SimpleCache\CacheInterface;
