@@ -66,16 +66,20 @@ Swordfox\Shopify\Model\Product:
 ```
 
 ### Set up import script
-You can run the import script manually trough the dev/tasks interface or set up up to run as a cron task. The default task is designed to run once per day and imports / updates the latest 50 `api_limit` from *admin/products.json*, *admin/custom_collections.json* & *admin/smart_collections.json*.
+You can run the import script manually through the dev/tasks interface or set up to run as a cron task. The default task is designed to run once per day and imports / updates the latest 50 `api_limit` from *admin/products.json*, *admin/custom_collections.json* & *admin/smart_collections.json*.
 `http://example.com/dev/tasks/Swordfox-Shopify-Task-Import` or `sake dev/tasks/Swordfox-Shopify-Task-Import`
 
 The productsonly task is designed to run a few times a day if webhooks are not being used, it imports the latest 50 `api_limit` from *admin/products.json*.
 
-`http://example.com/dev/tasks/Swordfox-Shopify-Task-Import/productsonly` or `sake dev/tasks/Swordfox-Shopify-Task-Import/productsonly`
+`http://example.com/dev/tasks/Swordfox-Shopify-Task-Import?productsonly=1` or `sake dev/tasks/Swordfox-Shopify-Task-Import --productsonly=1`
 
 The productsall task is designed to run on initial set up and imports all from *admin/products.json*, *admin/custom_collections.json* & *admin/smart_collections.json*.
 
-`http://example.com/dev/tasks/Swordfox-Shopify-Task-Import/productsall` or `sake dev/tasks/Swordfox-Shopify-Task-Import/productsall`
+`http://example.com/dev/tasks/Swordfox-Shopify-Task-Import?productsall=1` or `sake dev/tasks/Swordfox-Shopify-Task-Import --productsall=1`
+
+The productsingle task requires the Shopify Product ID to be passed
+
+`http://example.com/dev/tasks/Swordfox-Shopify-Task-Import?productsingle=8993917501665` or `sake dev/tasks/Swordfox-Shopify-Task-Import --productsingle=8993917501665`
 
 ### Set up webhooks
 The following webhooks are supported and can be created automatically via the API using `http://example.com/dev/tasks/Swordfox-Shopify-Task-Webhooks/create` or `sake dev/tasks/Swordfox-Shopify-Task-Webhooks/create`
@@ -92,6 +96,6 @@ The following webhooks are supported and can be created automatically via the AP
 ![Shopify webhooks](/readme/webhooks.png)
 
 ### Set up delete_on_shopify
-You can run the delete on Shopify script manually trough the dev/tasks interface or set up up to run as a cron task. This task is useful for stores that sell one-off products and want to delete the products off Shopify after a certain period of time `delete_on_shopify_after: '+3 days'` which is set on ShopifyProduct::DeleteOnShopify during the import tasks if `delete_on_shopify: true`
+You can run the delete on Shopify script manually through the dev/tasks interface or set up to run as a cron task. This task is useful for stores that sell one-off products and want to delete the products off Shopify after a certain period of time `delete_on_shopify_after: '+3 days'` which is set on ShopifyProduct::DeleteOnShopify during the import tasks if `delete_on_shopify: true`
 
 `http://example.com/dev/tasks/Swordfox-Shopify-Task-DeleteOnShopify` or `sake dev/tasks/Swordfox-Shopify-Task-DeleteOnShopify`

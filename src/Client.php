@@ -33,6 +33,11 @@ class Client
     /**
      * @config null|string
      */
+    public $api_version = null;
+
+    /**
+     * @config null|string
+     */
     private static $storefront_access_token = null;
 
     /**

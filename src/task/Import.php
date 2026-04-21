@@ -7,6 +7,7 @@ ini_set('max_execution_time', '300');
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Swordfox\Shopify\Client;
 
@@ -26,6 +27,16 @@ class Import extends BuildTask
     public $api_limit;
     public $cron_interval;
 
+    public function getOptions(): array
+    {
+        return [
+            new InputOption('productsonly', null, InputOption::VALUE_NONE, 'Import products only'),
+            new InputOption('productsall', null, InputOption::VALUE_NONE, 'Import all products'),
+            new InputOption('productsingle', null, InputOption::VALUE_REQUIRED, 'Import a single product by ID'),
+            new InputOption('collectionsonly', null, InputOption::VALUE_NONE, 'Import collections only'),
+        ];
+    }
+
     public function execute(InputInterface $input, PolyOutput $output): int
     {
         try {
@@ -38,39 +49,41 @@ class Import extends BuildTask
             return 1;
         }
 
-        $productsonly = false;
-        $productsall = false;
-        $productssingle = false;
-        $collectionsonly = false;
+        $productsonly = $input->getOption('productsonly');
+        $productsall = $input->getOption('productsall');
+        $productssingle = $input->getOption('productsingle');
+        $collectionsonly = $input->getOption('collectionsonly');
 
-        $urlParts = explode('/', $_SERVER['REQUEST_URI']);
-        $urlPartsCheckIndex = (Director::is_cli() ? 3 : 4); // Cron or Browser
+        // prevent conflicting options
+        $optionsUsed = array_filter([
+            $productsonly,
+            $productsall,
+            $productssingle !== null,
+            $collectionsonly
+        ]);
 
-        if (isset($urlParts[$urlPartsCheckIndex])) {
-            if ($urlParts[$urlPartsCheckIndex]=='productsonly') {
-                $productsonly = true;
-            } elseif ($urlParts[$urlPartsCheckIndex]=='productsall') {
-                $productsall = true;
-            } elseif ($urlParts[$urlPartsCheckIndex]=='productsingle') {
-                $productssingle = $urlParts[$urlPartsCheckIndex+1];
-            } elseif ($urlParts[$urlPartsCheckIndex]=='collectionsonly') {
-                $collectionsonly = true;
-            }
+        if (count($optionsUsed) > 1) {
+            $output->writeln('<error>Only one mode can be used at a time.</error>');
+            return 1;
         }
 
         if (!Director::is_cli()) {
-            $output->writeln('<pre>');;
+            $output->writeln('<pre>');
         }
 
         if ($productsonly) {
             $this->importProducts($client);
-        } else if ($collectionsonly) {
+
+        } elseif ($collectionsonly) {
             $this->importCollections($client, 'custom_collections');
             $this->importCollections($client, 'smart_collections');
-        } else if ($productsall) {
+
+        } elseif ($productsall) {
             $this->importProductsAll($client);
-        } else if ($productssingle) {
+
+        } elseif ($productssingle !== null) {
             $this->importProductsSingle($client, $productssingle);
+
         } else {
             $this->importCollections($client, 'custom_collections', $client->cron_interval);
             $this->importCollections($client, 'smart_collections', $client->cron_interval);
@@ -78,7 +91,7 @@ class Import extends BuildTask
         }
 
         if (!Director::is_cli()) {
-            $output->writeln('</pre>');;
+            $output->writeln('</pre>');
         }
         
         $output->writeln('Done');
@@ -94,12 +107,26 @@ class Import extends BuildTask
      */
     public static function loop_map($map, &$object, $data)
     {
+        $skip = ['created_at', 'updated_at'];
+
         foreach ($map as $from => $to) {
-            if (is_array($to) && is_object($data->{$from})) {
-                self::loop_map($to, $object, $data->{$from});
-            } elseif (isset($data->{$from}) && $value = $data->{$from}) {
-                $object->{$to} = $value;
+
+            if (in_array($from, $skip, true)) {
+                continue;
             }
+            
+            if (!isset($data->{$from})) {
+                continue;
+            }
+
+            $value = $data->{$from};
+
+            // handle nested objects/arrays safely
+            if (is_object($value) || is_array($value)) {
+                $value = json_encode($value);
+            }
+
+            $object->$to = DBField::create_field('Varchar', (string)$value);
         }
     }
 }

@@ -503,15 +503,18 @@ class ShopifyExtension extends Extension
      * @param array $map
      * @param $object
      * @param $data
+     * 
+     * 
+     * @deprecated Use Import::loop_map() instead
      */
-    public static function loop_map($map, &$object, $data)
-    {
-        foreach ($map as $from => $to) {
-            if (is_array($to) && is_object($data->{$from})) {
-                self::loop_map($to, $object, $data->{$from});
-            } elseif (isset($data->{$from}) && $value = $data->{$from}) {
-                $object->{$to} = $value;
-            }
-        }
-    }
+    // public static function loop_map($map, &$object, $data)
+    // {
+    //     foreach ($map as $from => $to) {
+    //         if (is_array($to) && is_object($data->{$from})) {
+    //             self::loop_map($to, $object, $data->{$from});
+    //         } elseif (isset($data->{$from}) && $value = $data->{$from}) {
+    //             $object->{$to} = $value;
+    //         }
+    //     }
+    // }
 }
