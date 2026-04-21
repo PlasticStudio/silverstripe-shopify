@@ -10,6 +10,7 @@ use SilverStripe\PolyExecution\PolyOutput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Swordfox\Shopify\Client;
+use SilverStripe\ORM\FieldType\DBField;
 
 /**
  * Class Import
